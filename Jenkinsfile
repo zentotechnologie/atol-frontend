@@ -10,7 +10,33 @@ pipeline {
     JENKINS_CRED = "${PROJECT}"
   }
 
-
+  agent {
+    kubernetes {
+      label 'gceme'
+      defaultContainer 'jnlp'
+      yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+labels:
+  component: ci
+spec:
+  # Use service account that can deploy to all namespaces
+  serviceAccountName: cd-jenkins
+  containers:
+  - name: gcloud
+    image: eu.gcr.io/ci-zento/angular-docker:v1
+    command:
+    - cat
+    tty: true
+  - name: kubectl
+    image: eu.gcr.io/ci-zento/angular-docker:v1
+    command:
+    - cat
+    tty: true
+"""
+}
+  }
   stages {
 
 
